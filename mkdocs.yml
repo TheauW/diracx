@@ -1,0 +1,64 @@
+site_name: DiracX
+site_url: https://diracx.io/
+site_description: >-
+  Write your documentation in Markdown and create a professional static site in
+  minutes – searchable, customizable, in 60+ languages, for all devices
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+  font:
+    text: Roboto
+    code: Roboto Mono
+  # favicon: assets/favicon.png
+  logo: assets/images/logo.svg
+  icon:
+    logo: logo
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - header.autohide
+    - navigation.tabs
+
+nav:
+  - Home: index.md
+  - Users:
+    - Introduction: user/index.md
+    - Tutorials: user/tutorials/index.md
+    - How-To: user/how-to/index.md
+    - Explanations: user/reference/index.md
+    - Reference: user/reference/index.md
+  - Administrators:
+    - Introduction: admin/index.md
+    - Tutorials: admin/tutorials/index.md
+    - How-To: admin/how-to/index.md
+    - Explanations: admin/reference/index.md
+    - Reference: admin/reference/index.md
+  - Developers:
+    - Introduction:dev/index.md
+    - Tutorials: dev/tutorials/index.md
+    - How-To: dev/how-to/index.md
+    - Explanations: dev/reference/index.md
+    - Reference: dev/reference/index.md
+  - Project:
+    - Introduction: project/index.md
+    - Consortium: project/consortium.md
