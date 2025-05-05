@@ -41,23 +41,24 @@ theme:
 
 nav:
   - Home: index.md
+  - Roadmap: roadmap.md
   - Users:
     - Introduction: user/index.md
     - Tutorials: user/tutorials/index.md
     - How-To: user/how-to/index.md
-    - Explanations: user/reference/index.md
+    - Explanations: user/explanations/index.md
     - Reference: user/reference/index.md
   - Administrators:
     - Introduction: admin/index.md
     - Tutorials: admin/tutorials/index.md
     - How-To: admin/how-to/index.md
-    - Explanations: admin/reference/index.md
+    - Explanations: admin/explanations/index.md
     - Reference: admin/reference/index.md
   - Developers:
     - Introduction:dev/index.md
     - Tutorials: dev/tutorials/index.md
     - How-To: dev/how-to/index.md
-    - Explanations: dev/reference/index.md
+    - Explanations: dev/explanations/index.md
     - Reference: dev/reference/index.md
   - Project:
     - Introduction: project/index.md
