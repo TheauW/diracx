@@ -1,4 +1,8 @@
+extra_css:
+  - assets/styles/extra.css
+
 site_name: DiracX
+repo_url: https://github.com/DIRACGrid/diracx
 site_url: https://diracx.io/
 site_description: >-
   Write your documentation in Markdown and create a professional static site in
@@ -10,26 +14,23 @@ theme:
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
-        icon: material/link
+        icon: material/theme-light-dark
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-sunny
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: black
-      accent: indigo
+      # primary: black
+      # accent: indigo
       toggle:
-        icon: material/toggle-switch-off
+        icon: material/weather-night
         name: Switch to system preference
   font:
     text: Roboto
     code: Roboto Mono
-  # favicon: assets/favicon.png
   logo: assets/images/logo.svg
   icon:
     logo: logo
