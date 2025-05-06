@@ -43,6 +43,7 @@
 	// Nav.
 
 		// Title Bar.
+<<<<<<< HEAD
 			$(
 				'<div id="titleBar">' +
 					'<a href="#navPanel" class="toggle"></a>' +
@@ -70,6 +71,35 @@
 					target: $body,
 					visibleClass: 'navPanel-visible'
 				});
+=======
+			// $(
+			// 	'<div id="titleBar">' +
+			// 		'<a href="#navPanel" class="toggle"></a>' +
+			// 		'<span class="title">' + $('#logo').html() + '</span>' +
+			// 	'</div>'
+			// )
+			// 	.appendTo($body);
+
+		// Panel.
+			// $(
+			// 	'<div id="navPanel">' +
+			// 		'<nav>' +
+			// 			$('#nav').navList() +
+			// 		'</nav>' +
+			// 	'</div>'
+			// )
+			// 	.appendTo($body)
+			// 	.panel({
+			// 		delay: 500,
+			// 		hideOnClick: true,
+			// 		hideOnSwipe: true,
+			// 		resetScroll: true,
+			// 		resetForms: true,
+			// 		side: 'left',
+			// 		target: $body,
+			// 		visibleClass: 'navPanel-visible'
+			// 	});
+>>>>>>> a4ea2af (feat: add the home page)
 
 	// Parallax.
 	// Disabled on IE (choppy scrolling) and mobile platforms (poor performance).
@@ -247,4 +277,8 @@
 		$banner
 			._parallax();
 
+<<<<<<< HEAD
 })(jQuery);
+=======
+})(jQuery);
+>>>>>>> a4ea2af (feat: add the home page)

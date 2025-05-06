@@ -1,5 +1,5 @@
 ---
-title: DiracX Documentation
+title: Home
 hide:
   - navigation
   - toc
