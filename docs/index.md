@@ -1,25 +1,42 @@
 ---
-template: home.html
-title: Material for MkDocs
-social:
-  cards_layout_options:
-    title: Documentation that simply works
+title: DiracX Documentation
+hide:
+  - navigation
+  - toc
 ---
 
-<!-- # Welcome to MkDocs
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.md-content__inner {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.full-width-content {
+  position: absolute;
+  top: 48px; /* Hauteur de la barre d'onglets */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+.full-width-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+</style>
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files. -->
+<div class="full-width-content">
+  <iframe
+    src="assets/home.html"
+    style="width: 100%; height: 100%; border: none; display: block;">
+  </iframe>
+</div>

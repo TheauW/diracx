@@ -1,5 +1,8 @@
 extra_css:
-  - assets/styles/extra.css
+  - assets/css/extra.css
+
+extra_javascript:
+  - assets/js/hide-title-home.js
 
 site_name: DiracX
 repo_url: https://github.com/DIRACGrid/diracx
@@ -10,7 +13,6 @@ site_description: >-
 
 theme:
   name: material
-  custom_dir: docs/overrides
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
@@ -23,8 +25,6 @@ theme:
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      # primary: black
-      # accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to system preference
