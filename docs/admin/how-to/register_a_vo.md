@@ -3,6 +3,7 @@
 ## Prerequisites
 - You have access to your DiracX instance URL.
 <<<<<<< HEAD
+<<<<<<< HEAD
 - It is better to have admin rights on the VO’s IdP instance (e.g. [Indigo IAM](https://indigo-iam.github.io/)).
 
 ## Manage Users
@@ -11,6 +12,9 @@
 1. Log in to your VO’s IdP instance.
 =======
 - It is better to have admin rights on the VO’s IAM instance (e.g. Indigo IAM).
+=======
+- It is better to have admin rights on the VO’s IAM instance (e.g. [Indigo IAM](https://indigo-iam.github.io/v/current/)).
+>>>>>>> 8921500 (feat: add register vo doc)
 
 ## 1. Generate an OIDC client
 
@@ -23,6 +27,7 @@
      https://<your‑diracx‑url>/api/auth/authorize/complete
      ```
    - **Grant type**: `authorization_code`
+<<<<<<< HEAD
 <<<<<<< HEAD
    - **Scope**: at minimum `openid`, `profile` and `email`
 
@@ -49,6 +54,9 @@
     }
 =======
    - **Scope**: at minimum `openid`
+=======
+   - **Scope**: at minimum `openid`, `profile` and `email`
+>>>>>>> 8921500 (feat: add register vo doc)
 
 ## 2. Configure DiracX
 1. In your DIRAC CS, add under `DiracX > CsSync > VOs > <VO> > IdP`:

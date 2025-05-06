@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/semantic-release",
+  "branches": [
+    { "name": "main_FEAT_sem-release", "prerelease": "alpha" }
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    ["@orchestrator/semantic-release-monorepo", { "fixedMode": true }],
+    ["@semantic-release/git", { "assets": ["**/CHANGELOG.md", "**/pyproject.toml", "**/package.json"] }],
+    { "path": "@semantic-release/gitlab" },
+    ["@semantic-release/npm", { "pkgRoot": "packages/app", "tarballDir": "dist" }],
+    ["semantic-release-pypi", { "tarballDir": "dist", "skipBuild": true }]
+  ],
+  "tagFormat": "v${version}"
+}
