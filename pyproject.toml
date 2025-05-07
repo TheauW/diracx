@@ -17,6 +17,13 @@ dependencies = [
     "diracx-cli",
     "diracx-client",
     "diracx-core",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+testing = ["diracx-testing"]
+
+[tool.setuptools]
 packages = []
 
 [build-system]
