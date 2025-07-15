@@ -366,7 +366,7 @@ def test_insert_and_reschedule(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": submitted_job_ids},
+            json={"job_ids": submitted_job_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -378,7 +378,7 @@ def test_insert_and_reschedule(normal_user_client: TestClient):
 
     r = normal_user_client.post(
         "/api/jobs/reschedule",
-        params={"job_ids": submitted_job_ids},
+        json={"job_ids": submitted_job_ids},
     )
     assert r.status_code != 200, (
         f"Rescheduling more than {max_resched} times should have failed by now {r.json()}"
@@ -418,7 +418,7 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": fail_resched_ids},
+            json={"job_ids": fail_resched_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -432,7 +432,7 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": submitted_job_ids},
+            json={"job_ids": submitted_job_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -445,13 +445,14 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
             assert successful_results[str(jid)]["RescheduleCounter"] == i + 1
         for jid in fail_resched_ids:
             assert str(jid) in failed_results, result
+            # FIXME
             # assert successful_results[jid]["Status"] == JobStatus.RECEIVED
             # assert successful_results[jid]["MinorStatus"] == "Job Rescheduled"
             # assert successful_results[jid]["RescheduleCounter"] == i + 1
 
     r = normal_user_client.post(
         "/api/jobs/reschedule",
-        params={"job_ids": submitted_job_ids},
+        json={"job_ids": submitted_job_ids},
     )
     assert r.status_code != 200, (
         f"Rescheduling more than {max_resched} times should have failed by now {r.json()}"
@@ -851,7 +852,7 @@ def test_patch_metadata(normal_user_client: TestClient, valid_job_id: int):
         assert j["ApplicationStatus"] == "Unknown"
 
     # Act
-    hbt = str(datetime.now(timezone.utc))
+    hbt = datetime.now(timezone.utc).isoformat()
     r = normal_user_client.patch(
         "/api/jobs/metadata",
         json={
@@ -883,11 +884,14 @@ def test_patch_metadata(normal_user_client: TestClient, valid_job_id: int):
     )
     assert r.status_code == 200, r.json()
 
+    # TODO: This should be timezone aware
+    hbt1 = datetime.fromisoformat(r.json()[0]["HeartBeatTime"])
+    assert hbt1.tzinfo is None
+    hbt1 = hbt1.replace(tzinfo=timezone.utc)
+
     assert r.json()[0]["JobID"] == valid_job_id
     assert r.json()[0]["JobType"] == "VerySpecialIndeed"
-    assert datetime.fromisoformat(
-        r.json()[0]["HeartBeatTime"]
-    ) == datetime.fromisoformat(hbt)
+    assert hbt1 == datetime.fromisoformat(hbt)
     assert r.json()[0]["UserPriority"] == 2
 
 
@@ -929,9 +933,7 @@ def test_bad_patch_metadata(normal_user_client: TestClient, valid_job_id: int):
     )
 
     # Assert
-    assert r.status_code == 400, (
-        "PATCH metadata should 400 Bad Request if an attribute column's case is incorrect"
-    )
+    assert r.status_code == 422, r.text
 
 
 def test_diracx_476(normal_user_client: TestClient, valid_job_id: int):

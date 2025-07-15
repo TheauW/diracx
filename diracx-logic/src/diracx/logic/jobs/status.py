@@ -31,9 +31,12 @@ from DIRAC.WorkloadManagementSystem.Utilities.JobStatusUtility import (
 from diracx.core.config.schema import Config
 from diracx.core.models import (
     HeartbeatData,
+    JobAttributes,
     JobCommand,
     JobLoggingRecord,
+    JobMetaData,
     JobMinorStatus,
+    JobParameters,
     JobStatus,
     JobStatusUpdate,
     SetJobStatusReturn,
@@ -41,8 +44,7 @@ from diracx.core.models import (
     VectorSearchSpec,
 )
 from diracx.db.os.job_parameters import JobParametersDB
-from diracx.db.sql.job.db import JobDB, _get_columns
-from diracx.db.sql.job.schema import Jobs
+from diracx.db.sql.job.db import JobDB
 from diracx.db.sql.job_logging.db import JobLoggingDB
 from diracx.db.sql.sandbox_metadata.db import SandboxMetadataDB
 from diracx.db.sql.task_queue.db import TaskQueueDB
@@ -51,6 +53,10 @@ from diracx.logic.jobs.utils import check_and_prepare_job
 from diracx.logic.task_queues.priority import recalculate_tq_shares_for_entity
 
 logger = logging.getLogger(__name__)
+
+# Precalculate valid field sets for performance
+VALID_JOB_ATTRIBUTES = set(JobAttributes.model_fields.keys())
+VALID_JOB_PARAMETERS = set(JobParameters.model_fields.keys())
 
 
 async def remove_jobs(
@@ -502,36 +508,27 @@ async def remove_jobs_from_task_queue(
 
 
 async def set_job_parameters_or_attributes(
-    updates: dict[int, dict[str, Any]],
+    updates: dict[int, JobMetaData],
     job_db: JobDB,
     job_parameters_db: JobParametersDB,
 ):
     """Set job parameters or attributes for a list of jobs."""
-    attribute_columns: list[str] = [
-        col.name for col in _get_columns(Jobs.__table__, None)
-    ]
-    attribute_columns_lower: list[str] = [col.lower() for col in attribute_columns]
-
+    # Those dicts create a mapping of job_id -> {attribute_name: value}
     attr_updates: dict[int, dict[str, Any]] = {}
     param_updates: dict[int, dict[str, Any]] = {}
 
     for job_id, metadata in updates.items():
         attr_updates[job_id] = {}
         param_updates[job_id] = {}
-        for pname, pvalue in metadata.items():
-            # If the attribute exactly matches one of the allowed columns, treat it as an attribute.
-            if pname in attribute_columns:
+        for pname, pvalue in metadata.model_dump(exclude_none=True).items():
+            # An argument can be a job attribute and/or a job parameter
+
+            # Check if the argument is a valid job attribute
+            if pname in VALID_JOB_ATTRIBUTES:
                 attr_updates[job_id][pname] = pvalue
-            # Otherwise, if the lower-case version is valid, the user likely mis-cased the key.
-            elif pname.lower() in attribute_columns_lower:
-                correct_name = attribute_columns[
-                    attribute_columns_lower.index(pname.lower())
-                ]
-                raise ValueError(
-                    f"Attribute column '{pname}' is mis-cased. Did you mean '{correct_name}'?"
-                )
-            # Otherwise, assume it should be routed to the parameters DB.
-            else:
+
+            # Check if the argument is a valid job parameter
+            if pname in VALID_JOB_PARAMETERS:
                 param_updates[job_id][pname] = pvalue
 
     # Bulk set job attributes if required

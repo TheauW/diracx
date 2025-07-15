@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from http import HTTPStatus
 from typing import Annotated, Any
 
-from fastapi import HTTPException, Query
+from fastapi import Body, HTTPException, Query
 
 from diracx.core.models import (
     HeartbeatData,
     JobCommand,
+    JobMetaData,
     JobStatusUpdate,
     SetJobStatusReturn,
 )
@@ -32,10 +33,50 @@ from .access_policies import ActionType, CheckWMSPolicyCallable
 
 router = DiracxRouter()
 
+EXAMPLE_STATUS_UPDATES = {
+    "Default": {
+        "value": {
+            1: {
+                str(datetime.now(timezone.utc)): {
+                    "Status": "Received",
+                    "MinorStatus": "Marked as received",
+                },
+                str(datetime.now(timezone.utc)): {
+                    "Status": "Killed",
+                    "MinorStatus": "Marked as killed",
+                    "ApplicationStatus": "Job was killed by user",
+                    "Source": "User",
+                },
+            },
+            2: {
+                str(datetime.now(timezone.utc)): {
+                    "Status": "Failed",
+                    "MinorStatus": "Timeout",
+                },
+            },
+        }
+    },
+    "Structure of the request body": {
+        "value": {
+            "<job_id>": {
+                "<timestamp>": {
+                    "Status": "<status>",
+                    "MinorStatus": "<minor_status>",
+                    "ApplicationStatus": "<application_status>",
+                    "Source": "<source>",
+                }
+            }
+        }
+    },
+}
+
 
 @router.patch("/status")
 async def set_job_statuses(
-    job_update: dict[int, dict[datetime, JobStatusUpdate]],
+    job_update: Annotated[
+        dict[int, dict[datetime, JobStatusUpdate]],
+        Body(openapi_examples=EXAMPLE_STATUS_UPDATES),
+    ],
     config: Config,
     job_db: JobDB,
     job_logging_db: JobLoggingDB,
@@ -44,6 +85,14 @@ async def set_job_statuses(
     check_permissions: CheckWMSPolicyCallable,
     force: bool = False,
 ) -> SetJobStatusReturn:
+    """Set the status of a job or a list of jobs.
+
+    Body parameters:
+    - `Status`: The new status of the job.
+    - `MinorStatus`: The minor status of the job.
+    - `ApplicationStatus`: The application-specific status of the job.
+    - `Source`: The source of the status update (default is "Unknown").
+    """
     await check_permissions(
         action=ActionType.MANAGE, job_db=job_db, job_ids=list(job_update)
     )
@@ -73,9 +122,48 @@ async def set_job_statuses(
     return result
 
 
+EXAMPLE_HEARTBEAT = {
+    "Default": {
+        "value": {
+            1: {
+                "LoadAverage": 2.5,
+                "MemoryUsed": 1024.0,
+                "Vsize": 2048.0,
+                "AvailableDiskSpace": 500.0,
+                "CPUConsumed": 75.0,
+                "WallClockTime": 3600.0,
+                "StandardOutput": "Job is running smoothly.",
+            },
+            2: {
+                "LoadAverage": 1.0,
+                "MemoryUsed": 512.0,
+                "Vsize": 1024.0,
+                "AvailableDiskSpace": 250.0,
+                "CPUConsumed": 50.0,
+                "WallClockTime": 1800.0,
+                "StandardOutput": "Job is waiting for resources.",
+            },
+        }
+    },
+    "Structure of the request body": {
+        "value": {
+            "<job_id>": {
+                "LoadAverage": 2.5,
+                "MemoryUsed": 1024.0,
+                "Vsize": 2048.0,
+                "AvailableDiskSpace": 500.0,
+                "CPUConsumed": 75.0,
+                "WallClockTime": 3600.0,
+                "StandardOutput": "Job is running smoothly.",
+            }
+        }
+    },
+}
+
+
 @router.patch("/heartbeat")
 async def add_heartbeat(
-    data: dict[int, HeartbeatData],
+    data: Annotated[dict[int, HeartbeatData], Body(openapi_examples=EXAMPLE_HEARTBEAT)],
     config: Config,
     job_db: JobDB,
     job_logging_db: JobLoggingDB,
@@ -99,9 +187,16 @@ async def add_heartbeat(
     return await get_job_commands_bl(data, job_db)
 
 
+EXAMPLE_RESCHEDULE = {
+    "Default": {"value": {"job_ids": [1, 2, 3]}},
+}
+
+
 @router.post("/reschedule")
 async def reschedule_jobs(
-    job_ids: Annotated[list[int], Query()],
+    job_ids: Annotated[
+        list[int], Body(openapi_examples=EXAMPLE_RESCHEDULE, embed=True)
+    ],
     config: Config,
     job_db: JobDB,
     job_logging_db: JobLoggingDB,
@@ -110,6 +205,13 @@ async def reschedule_jobs(
     check_permissions: CheckWMSPolicyCallable,
     reset_jobs: Annotated[bool, Query()] = False,
 ) -> dict[str, Any]:
+    """Reschedule a list of killed or failed jobs.
+
+    Body parameters:
+    - `job_ids`: List of job IDs to reschedule.
+    - `reset_jobs`: If True, reset the count of reschedules for the jobs.
+
+    """
     await check_permissions(action=ActionType.MANAGE, job_db=job_db, job_ids=job_ids)
 
     resched_jobs = await reschedule_jobs_bl(
@@ -134,13 +236,70 @@ async def reschedule_jobs(
     return resched_jobs
 
 
+EXAMPLE_METADATA = {
+    "Default": {
+        "value": {
+            1: {
+                "UserPriority": 2,
+                "HeartBeatTime": str(datetime.now(timezone.utc)),
+                "Status": "Done",
+                "Site": "Meyrin",
+            },
+            2: {
+                "UserPriority": 1,
+                "HeartBeatTime": str(datetime.now(timezone.utc)),
+                "JobType": "AnotherType",
+            },
+        }
+    },
+    "Structure of the request body": {
+        "value": {
+            "<job_id>": {
+                "JobType": "Type of the job",
+                "JobGroup": "Group of the job",
+                "Site": "Site where the job is running",
+                "JobName": "Name of the job",
+                "Owner": "Owner of the job",
+                "OwnerGroup": "Group of the owner",
+                "VO": "Virtual Organization of the job",
+                "SubmissionTime": "Time when the job was submitted",
+                "RescheduleTime": "Time when the job was last rescheduled",
+                "LastUpdateTime": "Time when the job was last updated",
+                "StartExecTime": "Time when the job started execution",
+                "HeartBeatTime": "Time of the last heartbeat",
+                "EndExecTime": "Time when the job ended execution",
+                "Status": "Current status of the job",
+                "MinorStatus": "Minor status of the job",
+                "ApplicationStatus": "Application-specific status of the job",
+                "UserPriority": "Priority of the job for scheduling",
+                "RescheduleCounter": "Number of times the job has been rescheduled",
+                "VerifiedFlag": "Flag indicating if the job has been verified",
+                "AccountedFlag": "Flag indicating if the job has been accounted for",
+                "timestamp": "Timestamp of the last update",
+                "CPUNormalizationFactor": "Normalization factor for CPU usage",
+                "NormCPUTime(s)": "Normalized CPU time in seconds",
+                "Memory(kB)": "Memory usage in kilobytes",
+                "TotalCPUTime(s)": "Total CPU time in seconds",
+                "MemoryUsed(kb)": "Memory used in kilobytes",
+                "HostName": "Hostname where the job is running",
+                "GridCE": "Grid Computing Element where the job is running",
+                "ModelName": "Model name of the job",
+            }
+        }
+    },
+}
+
+
 @router.patch("/metadata", status_code=HTTPStatus.NO_CONTENT)
 async def patch_metadata(
-    updates: dict[int, dict[str, Any]],
+    updates: Annotated[dict[int, JobMetaData], Body(openapi_examples=EXAMPLE_METADATA)],
     job_db: JobDB,
     job_parameters_db: JobParametersDB,
     check_permissions: CheckWMSPolicyCallable,
 ):
+    """Update job metadata such as UserPriority, HeartBeatTime, JobType, etc.
+    The argument  are all the attributes/parameters of a job (except the ID).
+    """
     await check_permissions(action=ActionType.MANAGE, job_db=job_db, job_ids=updates)
     try:
         await set_job_parameters_or_attributes_bl(updates, job_db, job_parameters_db)

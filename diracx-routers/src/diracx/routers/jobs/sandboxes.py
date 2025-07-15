@@ -166,11 +166,11 @@ async def unassign_job_sandboxes(
 
 @router.delete("/sandbox")
 async def unassign_bulk_jobs_sandboxes(
-    jobs_ids: Annotated[list[int], Query()],
+    job_ids: Annotated[list[int], Query()],
     sandbox_metadata_db: SandboxMetadataDB,
     job_db: JobDB,
     check_permissions: CheckWMSPolicyCallable,
 ):
     """Delete bulk jobs sandbox mapping."""
-    await check_permissions(action=ActionType.MANAGE, job_db=job_db, job_ids=jobs_ids)
-    await unassign_jobs_sandboxes_bl(jobs_ids, sandbox_metadata_db)
+    await check_permissions(action=ActionType.MANAGE, job_db=job_db, job_ids=job_ids)
+    await unassign_jobs_sandboxes_bl(job_ids, sandbox_metadata_db)

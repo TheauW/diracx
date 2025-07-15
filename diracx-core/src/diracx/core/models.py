@@ -73,6 +73,71 @@ class JobSearchParams(BaseModel):
     # TODO: Add more validation
 
 
+class JobParameters(BaseModel):
+    """All the parameters that can be set for a job."""
+
+    timestamp: datetime | None = None
+    CPUNormalizationFactor: int | None = None
+    NormCPUTime_s: int | None = Field(None, alias="NormCPUTime(s)")
+    TotalCPUTime_s: int | None = Field(None, alias="TotalCPUTime(s)")
+    HostName: str | None = None
+    GridCE: str | None = None
+    ModelName: str | None = None
+    PilotAgent: str | None = None
+    Pilot_Reference: str | None = None
+    Memory_MB: int | None = Field(None, alias="Memory(MB)")
+    LocalAccount: str | None = None
+    PayloadPID: int | None = None
+    CEQueue: str | None = None
+    BatchSystem: str | None = None
+    JobType: str | None = None
+    JobStatus: str | None = None
+
+    class Config:
+        """Configuration for the JobParameters model."""
+
+        extra = "forbid"  # Disallow additional fields
+
+
+class JobAttributes(BaseModel):
+    """All the attributes that can be set for a job."""
+
+    JobType: str | None = None
+    JobGroup: str | None = None
+    Site: str | None = None
+    JobName: str | None = None
+    Owner: str | None = None
+    OwnerGroup: str | None = None
+    VO: str | None = None
+    SubmissionTime: datetime | None = None
+    RescheduleTime: datetime | None = None
+    LastUpdateTime: datetime | None = None
+    StartExecTime: datetime | None = None
+    HeartBeatTime: datetime | None = None
+    EndExecTime: datetime | None = None
+    Status: str | None = None
+    MinorStatus: str | None = None
+    ApplicationStatus: str | None = None
+    UserPriority: int | None = None
+    RescheduleCounter: int | None = None
+    VerifiedFlag: bool | None = None
+    AccountedFlag: bool | str | None = None
+
+    class Config:
+        """Configuration for the JobAttributes model."""
+
+        extra = "forbid"  # Disallow additional fields
+
+
+class JobMetaData(JobAttributes, JobParameters):
+    """A model that combines both JobAttributes and JobParameters."""
+
+    class Config:
+        """Configuration for the JobMetaData model."""
+
+        extra = "forbid"  # Disallow additional fields
+
+
 class JobStatus(StrEnum):
     SUBMITTING = "Submitting"
     RECEIVED = "Received"

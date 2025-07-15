@@ -163,7 +163,7 @@ def test_assign_then_unassign_sandboxes_to_jobs(normal_user_client: TestClient):
 
     # Unassign sb to job:
     job_ids = [job_id]
-    r = normal_user_client.delete("/api/jobs/sandbox", params={"jobs_ids": job_ids})
+    r = normal_user_client.delete("/api/jobs/sandbox", params={"job_ids": job_ids})
     assert r.status_code == 200
 
     # Get the sb again, it should'nt be there anymore:
