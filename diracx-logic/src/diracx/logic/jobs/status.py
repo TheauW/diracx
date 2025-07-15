@@ -519,6 +519,8 @@ async def set_job_parameters_or_attributes(
         attr_updates[job_id] = {}
         param_updates[job_id] = {}
         for pname, pvalue in metadata.items():
+            # An argument can be a job attribute and/or a job parameter
+
             # If the attribute exactly matches one of the allowed columns, treat it as an attribute.
             if pname in attribute_columns:
                 attr_updates[job_id][pname] = pvalue
@@ -530,8 +532,9 @@ async def set_job_parameters_or_attributes(
                 raise ValueError(
                     f"Attribute column '{pname}' is mis-cased. Did you mean '{correct_name}'?"
                 )
-            # Otherwise, assume it should be routed to the parameters DB.
-            else:
+
+            # Check if the argument is a valid job parameter
+            if pname in job_parameters_db.fields:
                 param_updates[job_id][pname] = pvalue
 
     # Bulk set job attributes if required

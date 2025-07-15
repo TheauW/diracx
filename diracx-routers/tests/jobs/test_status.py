@@ -366,7 +366,7 @@ def test_insert_and_reschedule(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": submitted_job_ids},
+            json={"job_ids": submitted_job_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -378,7 +378,7 @@ def test_insert_and_reschedule(normal_user_client: TestClient):
 
     r = normal_user_client.post(
         "/api/jobs/reschedule",
-        params={"job_ids": submitted_job_ids},
+        json={"job_ids": submitted_job_ids},
     )
     assert r.status_code != 200, (
         f"Rescheduling more than {max_resched} times should have failed by now {r.json()}"
@@ -418,7 +418,7 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": fail_resched_ids},
+            json={"job_ids": fail_resched_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -432,7 +432,7 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
     for i in range(max_resched):
         r = normal_user_client.post(
             "/api/jobs/reschedule",
-            params={"job_ids": submitted_job_ids},
+            json={"job_ids": submitted_job_ids},
         )
         assert r.status_code == 200, r.json()
         result = r.json()
@@ -451,7 +451,7 @@ def test_reschedule_job_attr_update(normal_user_client: TestClient):
 
     r = normal_user_client.post(
         "/api/jobs/reschedule",
-        params={"job_ids": submitted_job_ids},
+        json={"job_ids": submitted_job_ids},
     )
     assert r.status_code != 200, (
         f"Rescheduling more than {max_resched} times should have failed by now {r.json()}"
