@@ -73,7 +73,7 @@ class JobSearchParams(BaseModel):
     # TODO: Add more validation
 
 
-class JobParameters(BaseModel):
+class JobParameters(BaseModel, extra="forbid"):
     """All the parameters that can be set for a job."""
 
     timestamp: datetime | None = None
@@ -93,13 +93,8 @@ class JobParameters(BaseModel):
     JobType: str | None = None
     JobStatus: str | None = None
 
-    class Config:
-        """Configuration for the JobParameters model."""
 
-        extra = "forbid"  # Disallow additional fields
-
-
-class JobAttributes(BaseModel):
+class JobAttributes(BaseModel, extra="forbid"):
     """All the attributes that can be set for a job."""
 
     JobType: str | None = None
@@ -123,19 +118,9 @@ class JobAttributes(BaseModel):
     VerifiedFlag: bool | None = None
     AccountedFlag: bool | str | None = None
 
-    class Config:
-        """Configuration for the JobAttributes model."""
 
-        extra = "forbid"  # Disallow additional fields
-
-
-class JobMetaData(JobAttributes, JobParameters):
+class JobMetaData(JobAttributes, JobParameters, extra="forbid"):
     """A model that combines both JobAttributes and JobParameters."""
-
-    class Config:
-        """Configuration for the JobMetaData model."""
-
-        extra = "forbid"  # Disallow additional fields
 
 
 class JobStatus(StrEnum):

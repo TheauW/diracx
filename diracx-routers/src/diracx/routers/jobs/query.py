@@ -139,7 +139,7 @@ async def search(
     ] = None,
 ) -> list[dict[str, Any]]:
     """Creates a search query to the job database. This search can be based on
-    different parameters, such as job ID, status, owner, etc.
+    different parameters, such as jobID, status, owner, etc.
 
     **Possibilities**
     - Use `search` to filter jobs based on various parameters (optional).
@@ -198,7 +198,7 @@ EXAMPLE_SUMMARY = {
     },
     "Group by JobGroup with Search": {
         "summary": "Group the jobs by JobGroup and filter by status.",
-        "description": "We get all the unique JobGroups where the status is 'Waiting'. We also get the number of jobs "
+        "description": "We get all the unique JobGroups where the status is 'Waiting'. We also get the number of jobs."
         "in each group.",
         "value": {
             "grouping": ["JobGroup"],

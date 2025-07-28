@@ -1942,7 +1942,7 @@ class JobsOperations:
         """Search.
 
         Creates a search query to the job database. This search can be based on
-        different parameters, such as job ID, status, owner, etc.
+        different parameters, such as jobID, status, owner, etc.
 
         **Possibilities**
 
@@ -1981,7 +1981,7 @@ class JobsOperations:
         """Search.
 
         Creates a search query to the job database. This search can be based on
-        different parameters, such as job ID, status, owner, etc.
+        different parameters, such as jobID, status, owner, etc.
 
         **Possibilities**
 
@@ -2019,7 +2019,7 @@ class JobsOperations:
         """Search.
 
         Creates a search query to the job database. This search can be based on
-        different parameters, such as job ID, status, owner, etc.
+        different parameters, such as jobID, status, owner, etc.
 
         **Possibilities**
 
